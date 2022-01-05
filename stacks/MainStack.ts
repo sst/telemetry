@@ -38,7 +38,7 @@ export default class MainStack extends sst.Stack {
 
     // Create a HTTP API
     const api = new sst.Api(this, "Api", {
-      customDomain: this.stage === "prod" ? "telemetry.serverless-stack.com" : undefined,
+      customDomain: process.env.API_DOMAIN,
       defaultFunctionProps: {
         permissions: [topic],
         environment: {

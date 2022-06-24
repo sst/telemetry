@@ -50,23 +50,9 @@ export default class MainStack extends sst.Stack {
       },
     });
 
-    const apiNew = new sst.Api(this, "ApiNew", {
-      customDomain: process.env.API_DOMAIN_NEW,
-      defaultFunctionProps: {
-        permissions: [topic],
-        environment: {
-          TOPIC_ARN: topic.topicArn,
-        }
-      },
-      routes: {
-        "POST /events": "src/lambda.endpoint",
-      },
-    });
-
     // Show the endpoint in the output
     this.addOutputs({
       "ApiEndpoint": api.url,
-      "ApiEndpointNew": apiNew.url,
     });
   }
 }

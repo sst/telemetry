@@ -52,6 +52,9 @@ export const sendToPostHog: SNSHandler = async (snsEvent) => {
   try {
     await axios({
       method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
       url: "https://app.posthog.com/batch",
       data: JSON.stringify({
         api_key: process.env.POSTHOG_API_KEY,

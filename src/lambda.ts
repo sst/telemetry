@@ -32,12 +32,11 @@ export const endpoint: APIGatewayProxyHandlerV2 = async (event) => {
 };
 
 export const sendToPostHog: SNSHandler = async (snsEvent) => {
-  const events: any[] = [];
+  const batch: any[] = [];
   snsEvent.Records.forEach((record) => {
     const { context, environment, events } = JSON.parse(record.Sns.Message);
     events.forEach((event: any) => {
-      console.log("EVENT", event.name, event);
-      events.push({
+      batch.push({
         distinct_id: context.anonymousId,
         event: event.name,
         properties: {
@@ -50,8 +49,6 @@ export const sendToPostHog: SNSHandler = async (snsEvent) => {
     });
   });
 
-  console.log(JSON.stringify(events, null, 2));
-
   try {
     await axios({
       method: "post",
@@ -61,7 +58,7 @@ export const sendToPostHog: SNSHandler = async (snsEvent) => {
       url: "https://app.posthog.com/batch",
       data: JSON.stringify({
         api_key: process.env.POSTHOG_API_KEY,
-        batch: events,
+        batch,
       }),
       timeout: 5000,
     });

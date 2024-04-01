@@ -36,6 +36,7 @@ export const sendToPostHog: SNSHandler = async (snsEvent) => {
   snsEvent.Records.forEach((record) => {
     const { context, environment, events } = JSON.parse(record.Sns.Message);
     events.forEach((event: any) => {
+      console.log("EVENT", event.name, event);
       events.push({
         distinct_id: context.anonymousId,
         event: event.name,
@@ -48,6 +49,8 @@ export const sendToPostHog: SNSHandler = async (snsEvent) => {
       });
     });
   });
+
+  console.log(JSON.stringify(events, null, 2));
 
   try {
     await axios({

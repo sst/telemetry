@@ -1,4 +1,7 @@
 {
-  "extends": "@tsconfig/node14",
-  "include": ["stacks", "src"]
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node"
+  }
 }

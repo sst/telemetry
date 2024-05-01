@@ -35,19 +35,25 @@ export const sendToPostHog: SNSHandler = async (snsEvent) => {
   const batch: any[] = [];
   snsEvent.Records.forEach((record) => {
     const { context, environment, events } = JSON.parse(record.Sns.Message);
-    events.forEach((event: any) => {
-      batch.push({
-        distinct_id: context.anonymousId,
-        event: event.name,
-        properties: {
-          ...event.properties,
-          projectId: context.projectId,
-          sessionId: context.sessionId,
-          environment,
-        },
+    events
+      .filter(
+        (event: any) => event.name === "CLI_COMMAND" && !event.properties?.isCI
+      )
+      .forEach((event: any) => {
+        batch.push({
+          distinct_id: context.anonymousId,
+          event: event.name,
+          properties: {
+            ...event.properties,
+            projectId: context.projectId,
+            sessionId: context.sessionId,
+            environment,
+          },
+        });
       });
-    });
   });
+
+  if (!batch.length) return;
 
   try {
     await axios({
